@@ -1,8 +1,95 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Upload, Clock, BookOpen, CheckSquare, AlertCircle, Image } from 'lucide-react';
 
-export default function CreateCourse() {
-  const [isLoading, setIsLoading] = useState(false);
+const coursedata = [
+  {
+    "id":"1",
+    "courseName": "React Basics",
+    "heading": "Learn React from Scratch",
+    "courseTopic": "React.js",
+    "courseThumbNail": "https://img.freepik.com/free-vector/react-native-programming-banner_23-2149232302.jpg",
+    "coursePrice": "4999",
+    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample1",
+    "courseDiscription": "A beginner-friendly React course covering components, props, and hooks.",
+    "rating": 4.7,
+    "Features": {
+      "warchtime": "320 min",
+      "chapters": "8",
+      "quizes": "4"
+    }
+  },
+  {
+    "id":"2",
+    "courseName": "Node Mastery",
+    "heading": "Backend Development with Node.js",
+    "courseTopic": "Node.js",
+    "courseThumbNail": "https://img.freepik.com/free-vector/gradient-backend-developer-illustration_23-2149284016.jpg",
+    "coursePrice": "5999",
+    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample2",
+    "courseDiscription": "Master Node.js with Express, MongoDB, and REST APIs.",
+    "rating": 4.6,
+    "Features": {
+      "warchtime": "450 min",
+      "chapters": "10",
+      "quizes": "5"
+    }
+  },
+  {
+    "id":"3",
+    "courseName": "UI/UX Bootcamp",
+    "heading": "Design Thinking and UI Tools",
+    "courseTopic": "Design",
+    "courseThumbNail": "https://img.freepik.com/free-vector/flat-illustration-ux-ui-design_23-2149373027.jpg",
+    "coursePrice": "3999",
+    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample3",
+    "courseDiscription": "Learn how to design beautiful and usable interfaces.",
+    "rating": 4.4,
+    "Features": {
+      "warchtime": "280 min",
+      "chapters": "7",
+      "quizes": "3"
+    }
+  },
+  {
+    "id":"4",
+    "courseName": "JavaScript Deep Dive",
+    "heading": "Advanced JavaScript Concepts",
+    "courseTopic": "JavaScript",
+    "courseThumbNail": "https://img.freepik.com/free-vector/javascript-abstract-concept_335657-3706.jpg",
+    "coursePrice": "5499",
+    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample4",
+    "courseDiscription": "Understand closures, scopes, hoisting, async/await, and more.",
+    "rating": 4.8,
+    "Features": {
+      "warchtime": "360 min",
+      "chapters": "9",
+      "quizes": "6"
+    }
+  },
+  {
+    "id":"5",
+    "courseName": "Fullstack Project Lab",
+    "heading": "Build Real-World Projects",
+    "courseTopic": "Fullstack",
+    "courseThumbNail": "https://img.freepik.com/free-vector/software-engineer-concept_23-2148685403.jpg",
+    "coursePrice": "6999",
+    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample5",
+    "courseDiscription": "Use MERN stack to build complete apps with deployment.",
+    "rating": 4.9,
+    "Features": {
+      "warchtime": "600 min",
+      "chapters": "12",
+      "quizes": "8"
+    }
+  }
+]
+const EditCourse = () => {
+  const { courseId } = useParams();
+  const navigate = useNavigate();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
@@ -13,17 +100,55 @@ export default function CreateCourse() {
   const thumbnailInputRef = useRef(null);
   
   const [courseData, setCourseData] = useState({
-    courseName: null,
-    heading: null,
-    courseTopic: null,
-    coursePrice: null,
-    courseDiscription: null,
+    courseName: '',
+    heading: '',
+    courseTopic: '',
+    coursePrice: '',
+    courseDiscription: '',
     Features: {
-      watchtime: null,
-      chapters: null,
-      quizes: null
+      watchtime: '',
+      chapters: '',
+      quizes: ''
     }
   });
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        // const response = await fetch(`/api/getCourse/${courseId}`);
+        
+        // if (!response.ok) {
+        //   throw new Error('Failed to fetch course data');
+        // }
+        
+        // const data = await response.json();
+        const data = coursedata[courseId-1];
+        console.log(data);
+        
+        // Populate the form with existing data
+        setCourseData({
+          courseName: data.courseName || '',
+          heading: data.heading || '',
+          courseTopic: data.courseTopic || '',
+          coursePrice: data.coursePrice || '',
+          courseDiscription: data.courseDiscription || '',
+          Features: {
+            watchtime: data.Features?.watchtime || '',
+            chapters: data.Features?.chapters || '',
+            quizes: data.Features?.quizes || ''
+          }
+        });
+
+        setIsLoading(false);
+      } catch (error) {
+        setMessage({ text: `Error: ${error.message}`, type: 'error' });
+        setIsLoading(false);
+        console.error('Error fetching course:', error);
+      }
+    };
+    
+    fetchCourseData();
+  }, [courseId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +173,6 @@ export default function CreateCourse() {
     const file = e.target.files[0];
     if (file) {
       setVideoFile(file);
-      // Create a preview URL for the video
       const videoUrl = URL.createObjectURL(file);
       setVideoPreviewUrl(videoUrl);
     }
@@ -57,8 +181,7 @@ export default function CreateCourse() {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setThumbnailFile(file);
-      // Create a preview URL for the image
+      setThumbnailFile(file);e
       const imageUrl = URL.createObjectURL(file);
       setImagePreviewUrl(imageUrl);
     }
@@ -66,53 +189,69 @@ export default function CreateCourse() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSaving(true);
     setMessage({ text: '', type: '' });
-
-    if (!videoFile) {
-      setMessage({ text: 'Please upload an intro video', type: 'error' });
-      setIsLoading(false);
-      return;
-    }
-
-    if (!thumbnailFile) {
-      setMessage({ text: 'Please upload a course thumbnail', type: 'error' });
-      setIsLoading(false);
-      return;
-    }
 
     try {
       const formData = new FormData();
-    e
-      formData.append('introVideo', videoFile);
-      formData.append('courseThumbNail', thumbnailFile);
+      
+      if (videoFile) {
+        formData.append('introVideo', videoFile);
+      } 
+      if (thumbnailFile) {
+        formData.append('courseThumbNail', thumbnailFile);
+      }
       formData.append('courseData', JSON.stringify(courseData));
 
-      const response = await fetch('/api/addCourse', {
-        method: 'POST',
+      const response = await fetch(`/api/course/${id}`, {
+        method: 'PUT',
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create course');
+        throw new Error('Failed to update course');
       }
 
       const result = await response.json();
-      setMessage({ text: 'Course created successfully!', type: 'success' });
-      console.log('Course created:', result);
+      setMessage({ text: 'Course updated successfully!', type: 'success' });
+      console.log('Course updated:', result);
+      
+      setTimeout(() => {
+        navigate('/course');
+      }, 2000);
       
     } catch (error) {
       setMessage({ text: `Error: ${error.message}`, type: 'error' });
-      console.error('Error creating course:', error);
+      console.error('Error updating course:', error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-700">Loading course data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen p-6">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Create New Course</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Edit Course</h1>
+          <button
+            type="button"
+            onClick={() => navigate(`/course/${courseId}/lecture`)}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 focus:outline-none"
+          >
+            Edit Chapters
+          </button>
+        </div>
 
         {message.text && (
           <div className={`p-4 mb-6 rounded-md ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
@@ -177,14 +316,14 @@ export default function CreateCourse() {
               />
             </div>
 
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Course Description</label>
-              <input
-                type="textarea"
+              <textarea
                 name="courseDiscription"
                 value={courseData.courseDiscription}
                 onChange={handleInputChange}
                 placeholder="Enter description"
+                rows="3"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 required
               />
@@ -264,7 +403,9 @@ export default function CreateCourse() {
                       className="w-full h-48 object-cover rounded-md mb-4"
                     />
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">{thumbnailFile.name}</span>
+                      <span className="text-sm text-gray-600">
+                        {thumbnailFile ? thumbnailFile.name : 'Current thumbnail'}
+                      </span>
                       <button
                         type="button"
                         className="text-sm text-blue-600 hover:text-blue-800"
@@ -307,7 +448,9 @@ export default function CreateCourse() {
                       className="w-full h-48 object-cover rounded-md mb-4"
                     />
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">{videoFile.name}</span>
+                      <span className="text-sm text-gray-600">
+                        {videoFile ? videoFile.name : 'Current video'}
+                      </span>
                       <button
                         type="button"
                         className="text-sm text-blue-600 hover:text-blue-800"
@@ -332,19 +475,28 @@ export default function CreateCourse() {
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 flex space-x-4">
+            <button
+              type="button"
+              onClick={() => navigate('/course')}
+              className="w-full py-3 px-4 rounded-md font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isSaving}
               className={`w-full py-3 px-4 rounded-md font-medium text-white ${
-                isLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+                isSaving ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
               } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200`}
             >
-              {isLoading ? 'Creating Course...' : 'Create Course'}
+              {isSaving ? 'Saving Changes...' : 'Save Changes'}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default EditCourse;
