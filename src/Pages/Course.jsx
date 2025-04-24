@@ -169,8 +169,7 @@ const Course = () => {
   // }
 
   return (
-    <div className="min-h-screen px-6 py-6 w-auto">
-      <div className="mx-auto">
+      <div className="w-full mx-10 mt-10">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Course Management</h1>
           <Link
@@ -239,7 +238,6 @@ const Course = () => {
           A list of your recent courses.
         </div>
       </div>
-    </div>
   );
 };
 

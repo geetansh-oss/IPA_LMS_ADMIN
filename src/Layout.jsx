@@ -8,12 +8,8 @@ const Layout = () => {
     <div>
       <Navbar />
       <div className='flex flex-row mt-22'>
-        <div>
           <Sidebar />
-        </div>
-        <div>
           <Outlet />
-        </div>
       </div>
     </div>
   )

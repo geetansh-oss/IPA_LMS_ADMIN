@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import { Heart, ShoppingCart } from 'lucide-react';
 import Logo from '../assets/logo.png'
 import { Link } from 'react-router-dom';
-
+import '../App.css'
 const Navbar = () => {
 
 const logOut = () =>{
@@ -11,7 +11,7 @@ const logOut = () =>{
 }
 
   return (
-    <div className='w-full px-5 xl:px-10 py-2 flex justify-center mb-2 fixed top-0 left-0 z-10 bg-white' id='Navbar'>
+    <div className='w-full px-5 xl:px-10 py-2 flex justify-center mb-2 fixed top-0 left-0 bg-white z-10 navbarShadow' id='Navbar'>
       <div className='w-full flex flex-col gap-10 justify-between items-center lg:flex-row  lg:justify-center xl:gap-7'>
         <Link className='flex flex-1 w-full items-center gap-3' to={'/'}>
           <img src={Logo} alt="" className='h-20' />
