@@ -4,14 +4,14 @@ import { Upload, Clock, BookOpen, CheckSquare, AlertCircle, Image } from 'lucide
 
 const coursedata = [
   {
-    "id":"1",
+    "id": "1",
     "courseName": "React Basics",
     "heading": "Learn React from Scratch",
     "courseTopic": "React.js",
-    "courseThumbNail": "https://img.freepik.com/free-vector/react-native-programming-banner_23-2149232302.jpg",
     "coursePrice": "4999",
+    "courseDescription": "A beginner-friendly React course covering components, props, and hooks.",
+    "courseThumbNail": "https://img.freepik.com/free-vector/react-native-programming-banner_23-2149232302.jpg",
     "introVideo": "https://iframe.mediadelivery.net/play/411923/sample1",
-    "courseDiscription": "A beginner-friendly React course covering components, props, and hooks.",
     "rating": 4.7,
     "Features": {
       "warchtime": "320 min",
@@ -20,7 +20,7 @@ const coursedata = [
     }
   },
   {
-    "id":"2",
+    "id": "2",
     "courseName": "Node Mastery",
     "heading": "Backend Development with Node.js",
     "courseTopic": "Node.js",
@@ -36,7 +36,7 @@ const coursedata = [
     }
   },
   {
-    "id":"3",
+    "id": "3",
     "courseName": "UI/UX Bootcamp",
     "heading": "Design Thinking and UI Tools",
     "courseTopic": "Design",
@@ -52,7 +52,7 @@ const coursedata = [
     }
   },
   {
-    "id":"4",
+    "id": "4",
     "courseName": "JavaScript Deep Dive",
     "heading": "Advanced JavaScript Concepts",
     "courseTopic": "JavaScript",
@@ -68,7 +68,7 @@ const coursedata = [
     }
   },
   {
-    "id":"5",
+    "id": "5",
     "courseName": "Fullstack Project Lab",
     "heading": "Build Real-World Projects",
     "courseTopic": "Fullstack",
@@ -87,7 +87,7 @@ const coursedata = [
 const EditCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -95,10 +95,10 @@ const EditCourse = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
-  
+
   const videoInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
-  
+
   const [courseData, setCourseData] = useState({
     courseName: '',
     heading: '',
@@ -116,15 +116,15 @@ const EditCourse = () => {
     const fetchCourseData = async () => {
       try {
         // const response = await fetch(`/api/getCourse/${courseId}`);
-        
+
         // if (!response.ok) {
         //   throw new Error('Failed to fetch course data');
         // }
-        
+
         // const data = await response.json();
-        const data = coursedata[courseId-1];
+        const data = coursedata[courseId - 1];
         console.log(data);
-        
+
         // Populate the form with existing data
         setCourseData({
           courseName: data.courseName || '',
@@ -146,7 +146,7 @@ const EditCourse = () => {
         console.error('Error fetching course:', error);
       }
     };
-    
+
     fetchCourseData();
   }, [courseId]);
 
@@ -181,7 +181,7 @@ const EditCourse = () => {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setThumbnailFile(file);e
+      setThumbnailFile(file); e
       const imageUrl = URL.createObjectURL(file);
       setImagePreviewUrl(imageUrl);
     }
@@ -194,10 +194,10 @@ const EditCourse = () => {
 
     try {
       const formData = new FormData();
-      
+
       if (videoFile) {
         formData.append('introVideo', videoFile);
-      } 
+      }
       if (thumbnailFile) {
         formData.append('courseThumbNail', thumbnailFile);
       }
@@ -215,11 +215,11 @@ const EditCourse = () => {
       const result = await response.json();
       setMessage({ text: 'Course updated successfully!', type: 'success' });
       console.log('Course updated:', result);
-      
+
       setTimeout(() => {
         navigate('/course');
       }, 2000);
-      
+
     } catch (error) {
       setMessage({ text: `Error: ${error.message}`, type: 'error' });
       console.error('Error updating course:', error);
@@ -348,7 +348,7 @@ const EditCourse = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <BookOpen className="inline mr-1" size={16} />
@@ -364,7 +364,7 @@ const EditCourse = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <CheckSquare className="inline mr-1" size={16} />
@@ -394,11 +394,11 @@ const EditCourse = () => {
                   accept="image/*"
                   className="hidden"
                 />
-                
+
                 {imagePreviewUrl ? (
                   <div className="w-full">
-                    <img 
-                      src={imagePreviewUrl} 
+                    <img
+                      src={imagePreviewUrl}
                       alt="Thumbnail preview"
                       className="w-full h-48 object-cover rounded-md mb-4"
                     />
@@ -439,12 +439,12 @@ const EditCourse = () => {
                   accept="video/*"
                   className="hidden"
                 />
-                
+
                 {videoPreviewUrl ? (
                   <div className="w-full">
-                    <video 
-                      controls 
-                      src={videoPreviewUrl} 
+                    <video
+                      controls
+                      src={videoPreviewUrl}
                       className="w-full h-48 object-cover rounded-md mb-4"
                     />
                     <div className="flex justify-between">
@@ -486,9 +486,8 @@ const EditCourse = () => {
             <button
               type="submit"
               disabled={isSaving}
-              className={`w-full py-3 px-4 rounded-md font-medium text-white ${
-                isSaving ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200`}
+              className={`w-full py-3 px-4 rounded-md font-medium text-white ${isSaving ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200`}
             >
               {isSaving ? 'Saving Changes...' : 'Save Changes'}
             </button>

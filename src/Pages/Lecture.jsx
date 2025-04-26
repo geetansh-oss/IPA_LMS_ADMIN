@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, Plus, Clock, Film, BookOpen, X, Edit, Trash, Up
 export default function CourseManagement() {
   // Initial data
   const initialData = {
-    "CourseId": "6807d07c8bb1a8956e9d8814",
+    "CourseId": "6807d07c8bb1a8956e9d8814", // here we need to populate the id if the course
     "ModuleName": "Module 1",
     "ModuleDiscription": "Dummy module for a dummy course",
     "ModuleDuration": "45 min",
@@ -12,8 +12,8 @@ export default function CourseManagement() {
       {
         "videoName": "dummy video 1",
         "videoDiscription": "dummy video 1 for dummy course module 1",
-        "videoDuration": "20mis",
-        "videoUrl": "https://example.com/video1.mp4"
+        "videoDuration": "20min",
+        "videoId": "https://example.com/video1.mp4"
       }
     ],
     "quizes": [
