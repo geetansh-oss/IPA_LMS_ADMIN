@@ -4,98 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../utils/apiHandler';
 import { useAuth } from '../Context/AuthContext';
 
-const dummyCourses = [
-  {
-    id: "1",
-    courseName: "React Basics",
-    status: "draft",
-    heading: "Learn React from Scratch",
-    courseTopic: "React.js",
-    coursePrice: "5999",
-    courseDescription: "A beginner-friendly React course covering components, props, and hooks.",
-    rating: 4.3,
-    Features: {
-      warchtime: "320 min",
-      chapters: "8",
-      quizes: "4"
-    },
-    courseThumbNail: "imageID1",
-    introVideo: "videoID1"
-  },
-  {
-    id: "2",
-    courseName: "Advanced JavaScript",
-    status: "published",
-    heading: "Deep Dive into JavaScript",
-    courseTopic: "JavaScript",
-    coursePrice: "6999",
-    courseDescription: "Master closures, promises, async/await, and advanced JS concepts.",
-    rating: 4.7,
-    Features: {
-      warchtime: "410 min",
-      chapters: "12",
-      quizes: "6"
-    },
-    courseThumbNail: "imageID2",
-    introVideo: "videoID2"
-  },
-  {
-    id: "3",
-    courseName: "Node.js API Development",
-    status: "published",
-    heading: "Build RESTful APIs with Node.js",
-    courseTopic: "Node.js",
-    coursePrice: "5499",
-    courseDescription: "Learn how to build scalable RESTful APIs using Express and MongoDB.",
-    rating: 4.6,
-    Features: {
-      warchtime: "280 min",
-      chapters: "10",
-      quizes: "5"
-    },
-    courseThumbNail: "imageID3",
-    introVideo: "videoID3"
-  },
-  {
-    id: "4",
-    courseName: "CSS Flexbox & Grid",
-    status: "draft",
-    heading: "Master Modern Layout Techniques",
-    courseTopic: "CSS",
-    coursePrice: "2999",
-    courseDescription: "Master layout with Flexbox and Grid to build responsive UIs.",
-    rating: 4.2,
-    Features: {
-      warchtime: "180 min",
-      chapters: "6",
-      quizes: "3"
-    },
-    courseThumbNail: "imageID4",
-    introVideo: "videoID4"
-  },
-  {
-    id: "5",
-    courseName: "Next.js Crash Course",
-    status: "published",
-    heading: "Server-Side Rendering with Next.js",
-    courseTopic: "Next.js",
-    coursePrice: "7999",
-    courseDescription: "Build fast and scalable web apps with Next.js and React.",
-    rating: 4.8,
-    Features: {
-      warchtime: "360 min",
-      chapters: "9",
-      quizes: "4"
-    },
-    courseThumbNail: "imageID5",
-    introVideo: "videoID5"
-  }
-];
-
 const Course = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { Token } = useAuth();
@@ -110,7 +21,7 @@ const Course = () => {
         token: Token
       })
       console.log(response);
-      // setCourses(response);
+      setCourses(response.data);
 
       setLoading(false);
     };
@@ -154,13 +65,13 @@ const Course = () => {
     // }
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div className="text-xl font-semibold">Loading courses...</div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl font-semibold">Loading courses...</div>
+      </div>
+    );
+  }
 
   // if (error) {
   //   return (
@@ -198,7 +109,7 @@ const Course = () => {
           <tbody>
             {courses.map((course) => (
               <tr
-                key={course.id || index}
+                key={course._id}
                 className="border-b border-gray-800 hover:bg-gray-300 rounded-6xl"
               >
                 <td className="py-4 px-6 text-left">{course.courseName}</td>
@@ -206,26 +117,26 @@ const Course = () => {
                 <td className="py-4 px-6">
                   <div className="flex justify-center">
                     <button
-                      onClick={() => handleTogglePublish(course.id || index, course.status || 'Draft')}
-                      className={`px-3 py-1 rounded-md text-sm font-medium ${(course.status || 'Draft') === 'Published'
+                      onClick={() => handleTogglePublish(course._id)}
+                      className={`px-3 py-1 rounded-md text-sm font-medium ${(course.status) === 'Published'
                         ? 'bg-green-500 text-green-900'
                         : 'bg-yellow-500 text-yellow-900'
                         }`}
                     >
-                      {course.status || 'Draft'}
+                      {course.status}
                     </button>
                   </div>
                 </td>
                 <td className="py-4 px-6">
                   <div className="flex justify-end gap-2">
                     <button
-                      onClick={() => handleEdit(course.id || index)}
+                      onClick={() => handleEdit(course._id)}
                       className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1 rounded-md"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(course.id || index)}
+                      onClick={() => handleDelete(course._id)}
                       className="bg-red-800 hover:bg-red-700 text-white px-3 py-1 rounded-md hidden md:block"
                     >
                       <Trash2 className="w-4 h-4" />

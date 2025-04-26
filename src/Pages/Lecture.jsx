@@ -1,30 +1,8 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Plus, Clock, Film, BookOpen, X, Edit, Trash, Upload, Play } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Clock, Film, BookOpen, X, Trash, Play } from 'lucide-react';
 
 export default function CourseManagement() {
   // Initial data
-  const initialData = {
-    "CourseId": "6807d07c8bb1a8956e9d8814", // here we need to populate the id if the course
-    "ModuleName": "Module 1",
-    "ModuleDiscription": "Dummy module for a dummy course",
-    "ModuleDuration": "45 min",
-    "Videos": [
-      {
-        "videoName": "dummy video 1",
-        "videoDiscription": "dummy video 1 for dummy course module 1",
-        "videoDuration": "20min",
-        "videoId": "https://example.com/video1.mp4"
-      }
-    ],
-    "quizes": [
-      {
-        "quizName": "quiz 1",
-        "quizDiscription": "quiz one for module 1",
-        "quizDuration": "20 mins",
-        "quizLink": "https://www.freepik.com/free-psd/e-learning-banner-template-design_30118870.htm#fromView=keyword&page=1&position=1&uuid=4ff65ad6-17c9-43a0-9604-0955c70fcd0d&query=Course+Thumbnail"
-      }
-    ]
-  };
 
   // State for modules
   const [modules, setModules] = useState([initialData]);
@@ -218,7 +196,7 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen w-full">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-6">

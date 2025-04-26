@@ -1,92 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Upload, Clock, BookOpen, CheckSquare, AlertCircle, Image } from 'lucide-react';
+import { useAuth } from '../Context/AuthContext';
+import { apiService } from '../utils/apiHandler';
+import { toast } from 'react-toastify';
+import ThumbnailUploader from '../Components/ThumbnailUploader';
+import VideoUploader from '../Components/VideoUploader';
 
-const coursedata = [
-  {
-    "id": "1",
-    "courseName": "React Basics",
-    "heading": "Learn React from Scratch",
-    "courseTopic": "React.js",
-    "coursePrice": "4999",
-    "courseDescription": "A beginner-friendly React course covering components, props, and hooks.",
-    "courseThumbNail": "https://img.freepik.com/free-vector/react-native-programming-banner_23-2149232302.jpg",
-    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample1",
-    "rating": 4.7,
-    "Features": {
-      "warchtime": "320 min",
-      "chapters": "8",
-      "quizes": "4"
-    }
-  },
-  {
-    "id": "2",
-    "courseName": "Node Mastery",
-    "heading": "Backend Development with Node.js",
-    "courseTopic": "Node.js",
-    "courseThumbNail": "https://img.freepik.com/free-vector/gradient-backend-developer-illustration_23-2149284016.jpg",
-    "coursePrice": "5999",
-    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample2",
-    "courseDiscription": "Master Node.js with Express, MongoDB, and REST APIs.",
-    "rating": 4.6,
-    "Features": {
-      "warchtime": "450 min",
-      "chapters": "10",
-      "quizes": "5"
-    }
-  },
-  {
-    "id": "3",
-    "courseName": "UI/UX Bootcamp",
-    "heading": "Design Thinking and UI Tools",
-    "courseTopic": "Design",
-    "courseThumbNail": "https://img.freepik.com/free-vector/flat-illustration-ux-ui-design_23-2149373027.jpg",
-    "coursePrice": "3999",
-    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample3",
-    "courseDiscription": "Learn how to design beautiful and usable interfaces.",
-    "rating": 4.4,
-    "Features": {
-      "warchtime": "280 min",
-      "chapters": "7",
-      "quizes": "3"
-    }
-  },
-  {
-    "id": "4",
-    "courseName": "JavaScript Deep Dive",
-    "heading": "Advanced JavaScript Concepts",
-    "courseTopic": "JavaScript",
-    "courseThumbNail": "https://img.freepik.com/free-vector/javascript-abstract-concept_335657-3706.jpg",
-    "coursePrice": "5499",
-    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample4",
-    "courseDiscription": "Understand closures, scopes, hoisting, async/await, and more.",
-    "rating": 4.8,
-    "Features": {
-      "warchtime": "360 min",
-      "chapters": "9",
-      "quizes": "6"
-    }
-  },
-  {
-    "id": "5",
-    "courseName": "Fullstack Project Lab",
-    "heading": "Build Real-World Projects",
-    "courseTopic": "Fullstack",
-    "courseThumbNail": "https://img.freepik.com/free-vector/software-engineer-concept_23-2148685403.jpg",
-    "coursePrice": "6999",
-    "introVideo": "https://iframe.mediadelivery.net/play/411923/sample5",
-    "courseDiscription": "Use MERN stack to build complete apps with deployment.",
-    "rating": 4.9,
-    "Features": {
-      "warchtime": "600 min",
-      "chapters": "12",
-      "quizes": "8"
-    }
-  }
-]
 const EditCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { Token } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -104,9 +28,9 @@ const EditCourse = () => {
     heading: '',
     courseTopic: '',
     coursePrice: '',
-    courseDiscription: '',
+    courseDescription: '',
     Features: {
-      watchtime: '',
+      watchTime: '',
       chapters: '',
       quizes: ''
     }
@@ -114,39 +38,28 @@ const EditCourse = () => {
 
   useEffect(() => {
     const fetchCourseData = async () => {
-      try {
-        // const response = await fetch(`/api/getCourse/${courseId}`);
 
-        // if (!response.ok) {
-        //   throw new Error('Failed to fetch course data');
-        // }
+      const response = await apiService({
+        method: 'GET',
+        endpoint: `/getCourse/${courseId}`,
+        token: Token
+      });
 
-        // const data = await response.json();
-        const data = coursedata[courseId - 1];
-        console.log(data);
-
-        // Populate the form with existing data
-        setCourseData({
-          courseName: data.courseName || '',
-          heading: data.heading || '',
-          courseTopic: data.courseTopic || '',
-          coursePrice: data.coursePrice || '',
-          courseDiscription: data.courseDiscription || '',
-          Features: {
-            watchtime: data.Features?.watchtime || '',
-            chapters: data.Features?.chapters || '',
-            quizes: data.Features?.quizes || ''
-          }
-        });
-
-        setIsLoading(false);
-      } catch (error) {
-        setMessage({ text: `Error: ${error.message}`, type: 'error' });
-        setIsLoading(false);
-        console.error('Error fetching course:', error);
-      }
+      setCourseData({
+        courseName: response.courseName,
+        heading: response.heading,
+        courseTopic: response.courseTopic,
+        coursePrice: response.coursePrice,
+        courseDescription: response.courseDescription,
+        Features: {
+          watchTime: response.Features?.watchTime,
+          chapters: response.Features?.chapters,
+          quizes: response.Features?.quizes
+        }
+      });
+      console.log(courseData);
+      setIsLoading(false);
     };
-
     fetchCourseData();
   }, [courseId]);
 
@@ -181,10 +94,67 @@ const EditCourse = () => {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setThumbnailFile(file); e
+      setThumbnailFile(file);
       const imageUrl = URL.createObjectURL(file);
       setImagePreviewUrl(imageUrl);
     }
+  };
+
+  const handleUploadVideo = async (e) => {
+    e.preventDefault();
+    // /api/uploadVideo this route will response videoID which we will store in courseThumbNail
+    setIsLoadingVideo(true);
+
+    const formData = new FormData();
+    formData.append('video', videoFile);
+    formData.append('title', videoFile.name);
+    formData.append('collectionId', collectionID);
+    console.log(formData);
+    console.log(Token);
+    const response = await apiService({
+      method: 'POST',
+      endpoint: '/uploadVideo',
+      token: Token,
+      data: formData
+    });
+    console.log(response);
+    toast.success(response.message);
+    setCourseData(preData => ({
+      ...preData,
+      introVideo: response.videoId, //need to check response first
+    }));
+
+    console.log(courseData.introVideo);
+    setMessage({ text: 'Video upload succcessfully!', type: 'success' })
+    setIsLoadingVideo(false);
+  };
+
+  const handleUploadThumbnail = async (e) => {
+    e.preventDefault();
+    // /api/upload-image this route will response imageID which we will store in courseThumbNail
+    setIsLoadingImage(true);
+
+    const formData = new FormData();
+    formData.append('file', thumbnailFile);
+    console.log(formData);
+
+    console.log(Token);
+    const response = await apiService({
+      method: 'POST',
+      endpoint: '/upload-image',
+      token: Token,
+      data: formData
+    });
+    console.log(response);
+    toast.success(response.message);
+    setCourseData(preData => ({
+      ...preData,
+      courseThumbNail: response.url, //need to check ImageID
+    }));
+
+    console.log(courseData.courseThumbNail);
+    setMessage({ text: 'Thumbnail upload succcessfully!', type: 'success' })
+    setIsLoadingImage(false);
   };
 
   const handleSubmit = async (e) => {
@@ -192,40 +162,21 @@ const EditCourse = () => {
     setIsSaving(true);
     setMessage({ text: '', type: '' });
 
-    try {
-      const formData = new FormData();
+    const response = await apiService({
+      method: 'PUT',
+      endpoint: `/updateCourse/${courseId}`,
+      token: Token,
+      data: courseData
+    });
+    toast.success(response.message);
+    
+    console.log('Course updated:', result);
 
-      if (videoFile) {
-        formData.append('introVideo', videoFile);
-      }
-      if (thumbnailFile) {
-        formData.append('courseThumbNail', thumbnailFile);
-      }
-      formData.append('courseData', JSON.stringify(courseData));
+    setTimeout(() => {
+      navigate('/course');
+    }, 2000);
+    setIsSaving(false);
 
-      const response = await fetch(`/api/course/${id}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update course');
-      }
-
-      const result = await response.json();
-      setMessage({ text: 'Course updated successfully!', type: 'success' });
-      console.log('Course updated:', result);
-
-      setTimeout(() => {
-        navigate('/course');
-      }, 2000);
-
-    } catch (error) {
-      setMessage({ text: `Error: ${error.message}`, type: 'error' });
-      console.error('Error updating course:', error);
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   if (isLoading) {
@@ -319,8 +270,8 @@ const EditCourse = () => {
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Course Description</label>
               <textarea
-                name="courseDiscription"
-                value={courseData.courseDiscription}
+                name="courseDescription"
+                value={courseData.courseDescription}
                 onChange={handleInputChange}
                 placeholder="Enter description"
                 rows="3"
@@ -340,8 +291,8 @@ const EditCourse = () => {
                 </label>
                 <input
                   type="text"
-                  name="Features.watchtime"
-                  value={courseData.Features.watchtime}
+                  name="Features.watchTime"
+                  value={courseData.Features.watchTime}
                   onChange={handleInputChange}
                   placeholder="e.g. 305 min"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
