@@ -17,8 +17,7 @@ const Course = () => {
 
       const response = await apiService({
         method: 'GET',
-        endpoint: '/getCourses',
-        token: Token
+        endpoint: `/getCourses/1`,
       })
       console.log(response);
       setCourses(response.data);
