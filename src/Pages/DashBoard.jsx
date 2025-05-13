@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const DashBoard = () => {
   return (
-    <div className="text-blue-600">
-      <Link to={"/course/create"} className='flex items-center'>Create</Link>
+    <div className="text-blue-600 flex justify-center items-center mx-auto">
+      DashBoard
     </div>
   )
 }

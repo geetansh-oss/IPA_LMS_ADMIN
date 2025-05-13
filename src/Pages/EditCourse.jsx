@@ -4,8 +4,6 @@ import { Upload, Clock, BookOpen, CheckSquare, AlertCircle, Image } from 'lucide
 import { useAuth } from '../Context/AuthContext';
 import { apiService } from '../utils/apiHandler';
 import { toast } from 'react-toastify';
-import ThumbnailUploader from '../Components/ThumbnailUploader';
-import VideoUploader from '../Components/VideoUploader';
 
 const EditCourse = () => {
   const { courseId } = useParams();

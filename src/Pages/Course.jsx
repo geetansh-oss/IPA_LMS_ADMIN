@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Trash2, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../utils/apiHandler';
@@ -72,18 +72,8 @@ const Course = () => {
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div className="text-xl font-semibold text-red-600">
-  //         Error: {error}. Please try again later.
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className="w-full mx-10 mt-10">
+    <div className="mx-10 mt-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Course Management</h1>
         <Link

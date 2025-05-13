@@ -1,106 +1,73 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../Context/AuthContext';
+import { useCourse } from '../Context/CourseContext'; // Updated to use CourseContext
 import { useParams } from 'react-router-dom';
-import { apiService } from '../utils/apiHandler';
 import VideoUploader from '../Components/VideoUploader';
 
 export default function CourseModuleCreator() {
-
   const { courseId } = useParams();
   const { Token } = useAuth();
 
-  const [allModules, setAllModules] = useState([]);
-  const [module, setModule] = useState({
+  // Get course-related methods and data from the CourseContext
+  const { useChapters, addChapter, updateChapter, deleteChapter } = useCourse();
+  const { data: chapterData, isLoading, isError } = useChapters(courseId, Token);
+  console.log(chapterData?.chapters);
+  // Module state
+  const [currentModule, setCurrentModule] = useState({
     CourseId: courseId,
-    ModuleName: "",
-    ModuleDescription: "",
-    ModuleDuration: "",
+    ModuleName: '',
+    ModuleDescription: '',
+    ModuleDuration: '',
     Videos: [],
-    quizes: []
+    quizes: [],
   });
-
-  // State for currently selected module index from allModules
-  const [currentModuleIndex, setCurrentModuleIndex] = useState(null);
 
   // State to track if we're editing an existing module or creating a new one
   const [isEditing, setIsEditing] = useState(false);
-
-  // State for video upload
+  const [currentModuleIndex, setCurrentModuleIndex] = useState(null);
   const [videoUploading, setVideoUploading] = useState(false);
-
-  // Fetch all modules on component mount
-  // http://localhost:3000/api/chapter/course/6807d07c8bb1a8956e9d8814
-  useEffect(() => {
-    const fetchModules = async () => {
-      const response = await apiService({
-        method: 'GET',
-        endpoint: `/chapter/course/${courseId}`,
-        token: Token
-      });
-      setAllModules(response.chapters);
-      console.log(allModules);
-    }
-    fetchModules();
-  }, []);
-
-  // Create a new empty module
-  const createNewModule = () => {
-    // setModule({
-    //   CourseId: courseId,
-    //   ModuleName: "",
-    //   ModuleDescription: "",
-    //   ModuleDuration: "",
-    //   Videos: [],
-    //   quizes: []
-    // });
-    // setIsEditing(false);
-    // setCurrentModuleIndex(null);
-    console.log("mf");
-  };
 
   // Select an existing module to edit
   const selectModule = (index) => {
-    setModule(allModules[index]);
-    console.log(module);
+    setCurrentModule(chapterData.chapters[index]);
     setCurrentModuleIndex(index);
     setIsEditing(true);
   };
 
   // Update current module state
-  const updateModule = (field, value) => {
-    setModule(prev => ({
+  const updateModuleField = (field, value) => {
+    setCurrentModule((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  // Add a new video to current module
+  // Add a new video to the current module
   const addVideo = () => {
-    setModule(prev => ({
+    setCurrentModule((prev) => ({
       ...prev,
       Videos: [
         ...prev.Videos,
         {
-          videoName: "",
-          videoDescription: "",
-          videoDuration: "",
-          videoId: ""
-        }
-      ]
+          videoName: '',
+          videoDescription: '',
+          videoDuration: '',
+          videoId: '',
+        },
+      ],
     }));
   };
 
   // Update video details
   const updateVideo = (videoIndex, field, value) => {
-    const updatedVideos = [...module.Videos];
+    const updatedVideos = [...currentModule.Videos];
     updatedVideos[videoIndex] = {
       ...updatedVideos[videoIndex],
-      [field]: value
+      [field]: value,
     };
-
-    setModule(prev => ({
+    setCurrentModule((prev) => ({
       ...prev,
-      Videos: updatedVideos
+      Videos: updatedVideos,
     }));
   };
 
@@ -108,140 +75,130 @@ export default function CourseModuleCreator() {
   const uploadVideo = async (videoIndex) => {
     // Mock response with video ID
     const videoId = `Video${Date.now()}`;
-
-    // Update the video with the new ID
-    const updatedVideos = [...module.Videos];
+    const updatedVideos = [...currentModule.Videos];
     updatedVideos[videoIndex] = {
       ...updatedVideos[videoIndex],
-      videoId: videoId
+      videoId,
     };
-
-    setModule(prev => ({
+    setCurrentModule((prev) => ({
       ...prev,
-      Videos: updatedVideos
+      Videos: updatedVideos,
     }));
 
     alert(`Video uploaded successfully! ID: ${videoId}`);
-
-    console.error("Error uploading video:", error);
-    alert("Failed to upload video");
-
     setVideoUploading(false);
   };
 
-  // Add a new quiz to current module
+  // Add a new quiz to the current module
   const addQuiz = () => {
-    setModule(prev => ({
+    setCurrentModule((prev) => ({
       ...prev,
-      quizes: [
+      quizzes: [
         ...prev.quizes,
         {
-          quizName: "",
-          quizDiscription: "",
-          quizDuration: "",
-          quizLink: ""
-        }
-      ]
+          quizName: '',
+          quizDescription: '',
+          quizDuration: '',
+          quizLink: '',
+        },
+      ],
     }));
   };
 
   // Update quiz details
   const updateQuiz = (quizIndex, field, value) => {
-    const updatedQuizzes = [...module.quizes];
+    const updatedQuizzes = [...currentModule.quizzes];
     updatedQuizzes[quizIndex] = {
       ...updatedQuizzes[quizIndex],
-      [field]: value
+      [field]: value,
     };
-
-    setModule(prev => ({
+    setCurrentModule((prev) => ({
       ...prev,
-      quizes: updatedQuizzes
+      quizzes: updatedQuizzes,
     }));
   };
 
   // Submit the module
   const submitModule = async () => {
-    // Validate module data
-    if (!module.ModuleName) {
-      alert("Please enter a module name");
+    if (!currentModule.ModuleName) {
+      alert('Please enter a module name');
       return;
     }
 
-    if (module.Videos.length === 0 && module.quizes.length === 0) {
-      alert("Please add at least one video or quiz to the module");
-      return;
-    }
+    // if (currentModule.Videos.length === 0 && currentModule.quizes.length === 0) {
+    //   alert('Please add at least one video or quiz to the module');
+    //   return;
+    // }
 
     // Check if all videos have videoId (meaning they've been uploaded)
-    const missingVideoIds = module.Videos.some(video => !video.videoId);
+    const missingVideoIds = currentModule.Videos.some((video) => !video.videoId);
     if (missingVideoIds) {
-      alert("Please upload all videos before submitting");
+      alert('Please upload all videos before submitting');
       return;
     }
 
     try {
-      // For demonstration purposes, we'll simulate an API call
-      console.log("Submitting module:", module);
-
-      // Mock API call
-      // In a real app, you would send the module data to your backend
-      // const response = await fetch('api/modules', {
-      //   method: isEditing ? 'PUT' : 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(module)
-      // });
-      // const savedModule = await response.json();
-
-      // Simulate successful save
-      await new Promise(resolve => setTimeout(resolve, 500));
-
       const savedModule = {
-        ...module,
-        _id: isEditing ? module._id : `new-module-${Date.now()}`
+        ...currentModule,
       };
 
-      // Update allModules state
       if (isEditing && currentModuleIndex !== null) {
-        const updatedModules = [...allModules];
-        updatedModules[currentModuleIndex] = savedModule;
-        setAllModules(updatedModules);
+        // Update the module
+        await updateChapter.mutateAsync({
+          courseId: courseId,
+          updatedChapter: savedModule,
+          token: Token,
+        });
       } else {
-        setAllModules(prev => [...prev, savedModule]);
+        // Add a new module
+        await addChapter.mutateAsync({
+          newChapter: savedModule,
+          token: Token
+        });
       }
 
-      // Reset form for a new module
-      createNewModule();
-
+      resetModule();
       alert(`Module successfully ${isEditing ? 'updated' : 'created'}!`);
     } catch (error) {
-      console.error("Error submitting module:", error);
-      alert("Failed to submit module");
+      console.error('Error submitting module:', error);
+      alert('Failed to submit module');
     }
   };
 
   // Delete a module
-  const deleteModule = async () => {
+  const deleteModuleHandler = async () => {
     if (!isEditing || currentModuleIndex === null) return;
 
     if (confirm('Are you sure you want to delete this module?')) {
       try {
-        // In a real app, you would call your backend API to delete the module
-        // await fetch(`api/modules/${module._id}`, { method: 'DELETE' });
-
-        // Update local state
-        const updatedModules = allModules.filter((_, index) => index !== currentModuleIndex);
-        setAllModules(updatedModules);
-
-        // Reset current module
-        createNewModule();
-
-        alert("Module deleted successfully");
+        const chapterId = chapterData.chapters[currentModuleIndex]._id; // use correct array
+        await deleteChapter.mutateAsync({ chapterId, token: Token }); // pass correct key
+        resetModule();
+        alert('Module deleted successfully');
       } catch (error) {
-        console.error("Error deleting module:", error);
-        alert("Failed to delete module");
+        console.error('Error deleting module:', error);
+        alert('Failed to delete module');
       }
     }
   };
+
+
+  // Reset the current module state
+  const resetModule = () => {
+    setCurrentModule({
+      CourseId: courseId,
+      ModuleName: '',
+      ModuleDescription: '',
+      ModuleDuration: '',
+      Videos: [],
+      quizes: [],
+    });
+    setIsEditing(false);
+    setCurrentModuleIndex(null);
+  };
+
+  if (isLoading) return <div>Loading chapters...</div>;
+  if (isError) return <div>Error loading chapters</div>;
 
   return (
     <div className="bg-gray-100 min-h-screen p-6 w-full">
@@ -250,7 +207,7 @@ export default function CourseModuleCreator() {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Course Modules</h1>
           <button
-            onClick={createNewModule}
+            onClick={resetModule}
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
           >
             Create New Module
@@ -258,7 +215,7 @@ export default function CourseModuleCreator() {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-2">
-          {allModules.map((mod, index) => (
+          {chapterData.chapters.map((mod, index) => (
             <button
               key={mod._id}
               onClick={() => selectModule(index)}
@@ -277,11 +234,11 @@ export default function CourseModuleCreator() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between mb-6">
           <h2 className="text-xl font-semibold">
-            {isEditing ? `Edit Module: ${module.ModuleName}` : "Create New Module"}
+            {isEditing ? `Edit Module: ${currentModule.ModuleName}` : 'Create New Module'}
           </h2>
           {isEditing && (
             <button
-              onClick={deleteModule}
+              onClick={deleteModuleHandler}
               className="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded"
             >
               Delete
@@ -294,169 +251,114 @@ export default function CourseModuleCreator() {
           <h3 className="text-lg font-medium mb-4">Module Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label htmlFor='moduleName' className="block text-sm font-medium text-gray-700 mb-1">Module Name <span className="text-red-500">*</span></label>
+              <label htmlFor="moduleName" className="block text-sm font-medium text-gray-700 mb-1">
+                Module Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
-                id='modeuleName'
-                value={module.ModuleName}
-                onChange={(e) => updateModule('ModuleName', e.target.value)}
+                id="moduleName"
+                value={currentModule.ModuleName}
+                onChange={(e) => updateModuleField('ModuleName', e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded"
                 placeholder="Enter module name"
               />
             </div>
             <div>
-              <label htmlFor='moduleDuration' className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+              <label htmlFor="moduleDuration" className="block text-sm font-medium text-gray-700 mb-1">
+                Duration
+              </label>
               <input
                 type="text"
-                id='moduleDuration'
-                value={module.ModuleDuration}
-                onChange={(e) => updateModule('ModuleDuration', e.target.value)}
+                id="moduleDuration"
+                value={currentModule.ModuleDuration}
+                onChange={(e) => updateModuleField('ModuleDuration', e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded"
                 placeholder="Enter duration (e.g., 45 min)"
               />
             </div>
           </div>
           <div>
-            <label htmlFor='moduleDescription' className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label htmlFor="moduleDescription" className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
             <textarea
-              id='moduleDescription'
-              value={module.ModuleDescription}
-              onChange={(e) => updateModule('ModuleDiscription', e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded h-24"
+              id="moduleDescription"
+              value={currentModule.ModuleDescription}
+              onChange={(e) => updateModuleField('ModuleDescription', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
               placeholder="Enter module description"
             />
           </div>
         </div>
 
-        {/* Videos Section */}
+        {/* Video Section */}
         <div className="border border-gray-200 rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Videos</h3>
-            <button
-              onClick={addVideo}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 rounded"
-            >
-              Add Video
-            </button>
-          </div>
-          {module.Videos.length === 0 ? (
+          <h3 className="text-lg font-medium mb-4">Videos</h3>
+          {currentModule.Videos.length === 0 && (
             <p className="text-gray-500">No videos added yet.</p>
-          ) : (
-            module.Videos.map((video, index) => (
-              <div key={index} className="space-y-4">
-                <div className="border border-gray-200 p-4 rounded bg-gray-50">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Video Name</label>
-                      <input
-                        type="text"
-                        value={video?.videoName}
-                        onChange={(e) => updateVideo(index, 'videoName', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Enter video name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                      <input
-                        type="text"
-                        value={video?.videoDuration}
-                        onChange={(e) => updateVideo(index, 'videoDuration', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Enter duration (e.g., 20 mins)"
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea
-                      value={video?.videoDescription}
-                      onChange={(e) => updateVideo(index, 'videoDescription', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
-                      placeholder="Enter video description"
-                    />
-                  </div>
-                  <VideoUploader
-                  />
-                </div>
-              </div>
-            ))
           )}
 
+          {currentModule.Videos.map((video, index) => (
+            <div key={index} className="mb-4">
+              <VideoUploader
+                video={video}
+                videoIndex={index}
+                updateVideo={updateVideo}
+                uploadVideo={uploadVideo}
+                videoUploading={videoUploading}
+              />
+            </div>
+          ))}
+
+          <button
+            onClick={addVideo}
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2"
+          >
+            Add Video
+          </button>
         </div>
 
-        {/* Quizzes Section */}
+        {/* Quiz Section */}
         <div className="border border-gray-200 rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Quizzes</h3>
-            <button
-              onClick={addQuiz}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 rounded"
-            >
-              Add Quiz
-            </button>
-          </div>
-
-          {module.quizes.length === 0 ? (
+          <h3 className="text-lg font-medium mb-4">Quizzes</h3>
+          {currentModule.quizes.length === 0 && (
             <p className="text-gray-500">No quizzes added yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {module.quizes.map((quiz, quizIndex) => (
-                <div key={quizIndex} className="border border-gray-200 p-4 rounded bg-gray-50">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Quiz Name</label>
-                      <input
-                        type="text"
-                        value={quiz.quizName}
-                        onChange={(e) => updateQuiz(quizIndex, 'quizName', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Enter quiz name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                      <input
-                        type="text"
-                        value={quiz.quizDuration}
-                        onChange={(e) => updateQuiz(quizIndex, 'quizDuration', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder="Enter duration (e.g., 15 mins)"
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea
-                      value={quiz.quizDiscription}
-                      onChange={(e) => updateQuiz(quizIndex, 'quizDiscription', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
-                      placeholder="Enter quiz description"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Quiz Link</label>
-                    <input
-                      type="text"
-                      value={quiz.quizLink}
-                      onChange={(e) => updateQuiz(quizIndex, 'quizLink', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
-                      placeholder="Enter quiz link"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
           )}
+
+          {currentModule.quizes.map((quiz, index) => (
+            <div key={index} className="mb-4">
+              {/* Quiz form elements */}
+              <div>
+                <label htmlFor={`quizName-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Quiz Name
+                </label>
+                <input
+                  type="text"
+                  id={`quizName-${index}`}
+                  value={quiz.quizName}
+                  onChange={(e) => updateQuiz(index, 'quizName', e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              {/* Other quiz details */}
+            </div>
+          ))}
+
+          <button
+            onClick={addQuiz}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded mt-2"
+          >
+            Add Quiz
+          </button>
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-end mt-6">
           <button
             onClick={submitModule}
-            className="py-3 px-8 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold"
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded"
           >
-            {isEditing ? 'Update Module' : 'Submit Module'}
+            {isEditing ? 'Update Module' : 'Create Module'}
           </button>
         </div>
       </div>

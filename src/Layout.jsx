@@ -7,12 +7,14 @@ const Layout = () => {
   return (
     <div>
       <Navbar />
-      <div className='flex flex-row mt-22'>
-          <Sidebar />
+      <div className="flex pt-24 h-screen">
+        <Sidebar />
+        <div className="flex-1 overflow-y-auto px-4">
           <Outlet />
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Layout;

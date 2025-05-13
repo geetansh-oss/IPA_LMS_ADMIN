@@ -1,27 +1,25 @@
-import { ChartNoAxesColumn, SquareLibrary, FolderPlus} from "lucide-react";
 import React from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { ChartNoAxesColumn, SquareLibrary, FolderPlus } from "lucide-react";
 
 const Sidebar = () => {
   return (
-
-      <div className="sticky top-0 left-0 lg:block w-[250px] sm:w-[300px] space-y-8 border-r border-gray-300 dark:border-gray-700  p-5 h-screen my-5">
-        <div className="space-y-4 ">
-          <Link to="/" className="flex items-center gap-2">
-            <ChartNoAxesColumn size={22} />
-            <h1>Dashboard</h1>
-          </Link>
-          <Link to="course" className="flex items-center gap-2">
-            <SquareLibrary size={22} />
-            <h1>Courses</h1>
-          </Link>
-          <Link to="/course/create" className="flex items-center gap-2">
-            <FolderPlus size={22} />
-            <h1>Create Course</h1>
-          </Link>
-        </div>
-      </div>
-
+    <div className="hidden md:block w-64 h-full border-r border-gray-300 p-4">
+      <nav className="space-y-4">
+        <Link to="/" className="flex items-center gap-2 text-sm font-medium">
+          <ChartNoAxesColumn size={20} />
+          Dashboard
+        </Link>
+        <Link to="/course" className="flex items-center gap-2 text-sm font-medium">
+          <SquareLibrary size={20} />
+          Courses
+        </Link>
+        <Link to="/course/create" className="flex items-center gap-2 text-sm font-medium">
+          <FolderPlus size={20} />
+          Create Course
+        </Link>
+      </nav>
+    </div>
   );
 };
 
