@@ -29,7 +29,7 @@ export default function CourseModuleCreator() {
 
   // Select an existing module to edit
   const selectModule = (index) => {
-    setCurrentModule(chapterData.chapters[index]);
+    setCurrentModule(chapterData?.chapters[index]);
     setCurrentModuleIndex(index);
     setIsEditing(true);
   };
@@ -215,7 +215,7 @@ export default function CourseModuleCreator() {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-2">
-          {chapterData.chapters.map((mod, index) => (
+          {chapterData?.chapters.map((mod, index) => (
             <button
               key={mod._id}
               onClick={() => selectModule(index)}

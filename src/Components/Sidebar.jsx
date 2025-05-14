@@ -4,7 +4,7 @@ import { ChartNoAxesColumn, SquareLibrary, FolderPlus, Share } from "lucide-reac
 
 const Sidebar = () => {
   return (
-    <div className="hidden md:block w-64 h-full border-r border-gray-300 p-4">
+    <div className="w-full h-full border-r border-grey-300 bg-slate-800 text-white p-4">
       <nav className="space-y-4">
         <Link to="/" className="flex items-center gap-2 text-sm font-medium">
           <ChartNoAxesColumn size={20} />

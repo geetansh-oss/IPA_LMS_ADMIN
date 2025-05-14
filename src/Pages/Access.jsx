@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { apiService } from '../utils/apiHandler'
 import { toast } from 'react-toastify'
@@ -6,7 +6,7 @@ import { useAuth } from '../Context/AuthContext'
 
 const Access = () => {
   const [data, setData] = useState({
-    userId: '',
+    email: '',
     courseId: '',
   })
   const { Token } = useAuth()
@@ -28,9 +28,9 @@ const Access = () => {
         token: Token,
         data,
       }),
-    onSuccess: () => {
-      toast.success('Access granted successfully!')
-      setData({ userId: '', courseId: '' })
+    onSuccess: (data) => {
+      toast.success(data.message || 'Access granted successfully!')
+      setData({ email: '', courseId: '' })
     },
     onError: () => {
       toast.error('Failed to give access.')
@@ -39,7 +39,7 @@ const Access = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!data.userId || !data.courseId) {
+    if (!data.email || !data.courseId) {
       toast.warn('Please fill out all fields')
       return
     }
@@ -47,24 +47,24 @@ const Access = () => {
   }
 
   return (
-    <div className="flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+    <div className="flex items-center justify-center h-full overflow-y-auto">
+      <div className="w-full flex flex-col gap-4 max-w-md bg-white shadow-lg rounded-2xl p-8 my-8">
         <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Give Access</h1>
         <p className="text-sm text-center text-gray-500 mb-6">
-          Select a course and enter the user ID to give access.
+          Select a course and enter the email to give access.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor='user' className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
+            <label htmlFor='user' className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
-              type="text"
+              type="email"
               id='user'
               required
-              placeholder="Enter User ID"
+              placeholder="Enter email"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              value={data.userId}
-              onChange={(e) => setData((prev) => ({ ...prev, userId: e.target.value }))}
+              value={data.email}
+              onChange={(e) => setData((prev) => ({ ...prev, email: e.target.value }))}
             />
           </div>
 
@@ -101,4 +101,4 @@ const Access = () => {
   )
 }
 
-export default Access
+export default Access;

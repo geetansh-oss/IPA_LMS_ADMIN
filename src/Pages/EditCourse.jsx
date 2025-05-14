@@ -22,6 +22,7 @@ const EditCourse = () => {
   const thumbnailInputRef = useRef(null);
 
   const [courseData, setCourseData] = useState({
+    status: 'Draft',
     courseName: '',
     heading: '',
     courseTopic: '',
@@ -42,8 +43,9 @@ const EditCourse = () => {
         endpoint: `/getCourse/${courseId}`,
         token: Token
       });
-
+      console.log(response);
       setCourseData({
+        status: response.status,
         courseName: response.courseName,
         heading: response.heading,
         courseTopic: response.courseTopic,
@@ -124,7 +126,7 @@ const EditCourse = () => {
 
     console.log(courseData.introVideo);
     setMessage({ text: 'Video upload succcessfully!', type: 'success' })
-    setIsLoadingVideo(false);
+    setIsLoading(false);
   };
 
   const handleUploadThumbnail = async (e) => {
@@ -167,7 +169,7 @@ const EditCourse = () => {
       data: courseData
     });
     toast.success(response.message);
-    
+
     console.log('Course updated:', result);
 
     setTimeout(() => {
