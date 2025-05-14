@@ -4,8 +4,8 @@ import { ChartNoAxesColumn, SquareLibrary, FolderPlus, Share } from "lucide-reac
 
 const Sidebar = () => {
   return (
-    <div className="w-full h-full border-r border-grey-300 bg-slate-800 text-white p-4">
-      <nav className="space-y-4">
+    <div className="w-full h-full border-r border-grey-300 bg-slate-800 text-white py-6 px-4">
+      <nav className="flex flex-col gap-6">
         <Link to="/" className="flex items-center gap-2 text-sm font-medium">
           <ChartNoAxesColumn size={20} />
           Dashboard
