@@ -3,6 +3,7 @@ import { Trash2, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../utils/apiHandler';
 import { useAuth } from '../Context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Course = () => {
   const [courses, setCourses] = useState([]);
@@ -33,12 +34,18 @@ const Course = () => {
 
   const handleDelete = async (courseId) => {
     if (window.confirm("Are you sure you want to delete this course? This action cannot be undone.")) {
-      try {
-        console.log(`Deleting course with ID: ${courseId}`);
-        // api route to delete cousreapi/deleteCourse/:courseID
-      } catch (err) {
-        console.error("Failed to delete course:", err);
-        alert("Failed to delete course. Please try again.");
+      const response = await apiService({
+        method: 'DELETE',
+        endpoint: `/deleteCourse/${courseId}`,
+        token: Token,
+      });
+      console.log(response);
+      if (response.status === 204) {
+        // Remove the deleted course from the state
+        setCourses(courses.filter(course => course._id !== courseId));
+        toast.success("Course deleted successfully.");
+      } else {
+        toast.error("Failed to delete course. Please try again.");
       }
     }
   };

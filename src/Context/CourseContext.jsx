@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from "react";
 import PropTypes from "prop-types";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "../utils/apiHandler";
 
 
@@ -8,21 +8,6 @@ const CourseContext = createContext();
 
 export const CourseProvider = ({ children }) => {
   const queryClient = useQueryClient();
-
-
-  // Fetch chapters by course ID
-  const useChapters = (courseId, token) =>
-    useQuery({
-      queryKey: ["chapters", courseId],
-      queryFn: async () => {
-        return await apiService({
-          method: "GET",
-          endpoint: `/chapter/course/${courseId}`,
-          token: token,
-        });
-      },
-      enabled: !!courseId,
-    });
 
   // Add chapter
   const addChapter = useMutation({
@@ -69,7 +54,6 @@ export const CourseProvider = ({ children }) => {
   });
 
   const contextValue = useMemo(() => ({
-    useChapters,
     addChapter: {
       mutateAsync: addChapter.mutateAsync,
       isLoading: addChapter.isLoading,

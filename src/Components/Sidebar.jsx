@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ChartNoAxesColumn, SquareLibrary, FolderPlus, Share } from "lucide-react";
 
@@ -10,13 +9,13 @@ const Sidebar = () => {
           <ChartNoAxesColumn size={20} />
           Dashboard
         </Link>
-        <Link to="/course" className="flex items-center gap-2 text-sm font-medium">
-          <SquareLibrary size={20} />
-          Courses
-        </Link>
         <Link to="/course/create" className="flex items-center gap-2 text-sm font-medium">
           <FolderPlus size={20} />
           Create Course
+        </Link>
+        <Link to="/course" className="flex items-center gap-2 text-sm font-medium">
+          <SquareLibrary size={20} />
+          Courses
         </Link>
         <Link to="/giveAccess" className="flex items-center gap-2 text-sm font-medium">
           <Share size={20} />

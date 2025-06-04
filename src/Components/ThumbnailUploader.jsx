@@ -1,4 +1,5 @@
 import { Image } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 export default function ThumbnailUploader({ imagePreviewUrl, thumbnailFile, isLoading, thumbnailInputRef, handleThumbnailChange, handleUploadThumbnail }) {
   return (
@@ -12,7 +13,7 @@ export default function ThumbnailUploader({ imagePreviewUrl, thumbnailFile, isLo
       />
 
       {imagePreviewUrl ? (
-        <div className="w-full max-w-md mx-auto">
+        <div className="flex flex-row mx-auto">
           <div className="w-full overflow-hidden rounded-md mb-4">
             <img
               src={imagePreviewUrl}
@@ -20,7 +21,7 @@ export default function ThumbnailUploader({ imagePreviewUrl, thumbnailFile, isLo
               className="w-full max-w-md aspect-video object-cover rounded-md mb-4"
             />
           </div>
-          <div className="flex justify-between items-center gap-2">
+          <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-gray-600 truncate">{thumbnailFile?.name}</span>
             <div className="flex gap-3">
               <button
@@ -55,3 +56,13 @@ export default function ThumbnailUploader({ imagePreviewUrl, thumbnailFile, isLo
     </div>
   );
 }
+
+ThumbnailUploader.propTypes = {
+  imagePreviewUrl: PropTypes.string,
+  thumbnailFile: PropTypes.object,
+  isLoading: PropTypes.bool,
+  thumbnailInputRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  handleThumbnailChange: PropTypes.func.isRequired,
+  handleUploadThumbnail: PropTypes.func.isRequired,
+};
+

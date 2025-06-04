@@ -1,44 +1,18 @@
-import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { Clock, BookOpen, CheckSquare, AlertCircle } from 'lucide-react';
-import { apiService } from '../utils/apiHandler';
-import { useAuth } from '../Context/AuthContext';
-import { toast } from 'react-toastify';
-import ThumbnailUploader from '../Components/ThumbnailUploader';
-import VideoUploader from '../Components/VideoUploader';
+import { useAuth } from '../../Context/AuthContext';
+import { apiService } from '../../utils/apiHandler';
+import ThumbnailUploader from '../ThumbnailUploader';
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+const Form1 = ({ formType, handleSubmit, courseData, setCourseData, message, setMessage, courseId }) => {
 
-export default function CreateCourse() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
-  const [isLoadingImage, setIsLoadingImage] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
-
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const [videoFile, setVideoFile] = useState(null);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState(null);
 
-  const videoInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
-
   const { Token } = useAuth();
-  const collectionID = import.meta.env.VITE_INTRO_COLLECTION_ID;
-
-
-  const [courseData, setCourseData] = useState({
-    status: "draft",
-    courseName: null,
-    heading: null,
-    courseTopic: null,
-    coursePrice: null,
-    courseDescription: null,
-    courseThumbNail: null,
-    introVideo: null,
-    Features: {
-      watchTime: null,
-      chapters: null,
-      quizes: null
-    }
-  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,11 +33,16 @@ export default function CreateCourse() {
     }
   };
 
+  useEffect(() => {
+    if (courseData.courseThumbNail) {
+      setImagePreviewUrl(courseData.courseThumbNail);
+    }
+  }, [courseData]);
+
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setThumbnailFile(file);
-      // Create a preview URL for the image
       const imageUrl = URL.createObjectURL(file);
       setImagePreviewUrl(imageUrl);
     }
@@ -71,94 +50,48 @@ export default function CreateCourse() {
 
   const handleUploadThumbnail = async (e) => {
     e.preventDefault();
-    // /api/upload-image this route will response imageID which we will store in courseThumbNail
     setIsLoadingImage(true);
 
     const formData = new FormData();
     formData.append('file', thumbnailFile);
-    console.log(formData);
 
-    console.log(Token);
     const response = await apiService({
       method: 'POST',
       endpoint: '/upload-image',
       token: Token,
       data: formData
     });
-    console.log(response);
-    toast.success(response.message);
-    setCourseData(preData => ({
-      ...preData,
-      courseThumbNail: response.url, //need to check ImageID
-    }));
-    
-    console.log(courseData.courseThumbNail);
+
+    const updatedCourseData = {
+      ...courseData,
+      courseThumbNail: response.url,
+    };
+    setCourseData(updatedCourseData);
+
+    console.log('Thumbnail uploaded successfully:', updatedCourseData);
+
+    await apiService({
+      method: 'PUT',
+      endpoint: `/updateCourse/${courseId}`,
+      token: Token,
+      data: updatedCourseData,
+    });
     setMessage({ text: 'Thumbnail upload succcessfully!', type: 'success' })
     setIsLoadingImage(false);
   };
 
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setVideoFile(file);
-      // Create a preview URL for the video
-      const videoUrl = URL.createObjectURL(file);
-      setVideoPreviewUrl(videoUrl);
-    }
-  };
-
-  const handleUploadVideo = async (e) => {
-    e.preventDefault();
-    // /api/uploadVideo this route will response videoID which we will store in courseThumbNail
-    setIsLoadingVideo(true);
-
-    const formData = new FormData();
-    formData.append('video', videoFile);
-    formData.append('title', videoFile.name);
-    formData.append('collectionId', collectionID);
-    console.log(formData);
-    console.log(Token);
-    const response = await apiService({
-      method: 'POST',
-      endpoint: '/uploadVideo',
-      token: Token,
-      data: formData
-    });
-    console.log(response);
-    toast.success(response.message);
-    setCourseData(preData => ({
-      ...preData,
-      introVideo: response.videoId, //need to check response first
-    }));
-    
-    console.log(courseData.introVideo);
-    setMessage({ text: 'Video upload succcessfully!', type: 'success' })
-    setIsLoadingVideo(false);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage({ text: '', type: '' });
-
-    console.log(courseData);
-    const response = await apiService({
-      method: 'POST',
-      endpoint: '/addCourse',
-      token: Token,
-      data: courseData
-    });
-    toast.success(response.message);
-
-    setMessage({ text: 'Course created successfully!', type: 'success' }); 
-    setIsLoading(false);
-  };
-
   return (
     <div className="mx-auto p-10 w-full mt-5">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Create New Course</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">{formType} Course</h1>
+        {formType === 'Edit' && (
+          <Link to={`/course/${courseId}/lecture`} className="text-sm text-blue-500 hover:underline mb-4">
+            <span className="font-semibold text-lg">Edit Lectures</span>
+          </Link>
+        )}
 
-      {message.text && (
+      </div>
+      {message?.text && (
         <div className={`p-4 mb-6 rounded-md ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
           <div className="flex items-center">
             <AlertCircle className="mr-2" size={20} />
@@ -166,7 +99,6 @@ export default function CreateCourse() {
           </div>
         </div>
       )}
-
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -224,20 +156,19 @@ export default function CreateCourse() {
               required
             />
           </div>
-
-          <div>
-            <label htmlFor='courseDescription' className="block text-sm font-medium text-gray-700 mb-1">Course Description</label>
-            <textarea
-              type="textarea"
-              id='courseDescription'
-              name="courseDescription"
-              value={courseData.courseDescription}
-              onChange={handleInputChange}
-              placeholder="Enter description"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+        </div>
+        <div className='mt-6'>
+          <label htmlFor='courseDescription' className="block text-sm font-medium text-gray-700 mb-1">Course Description</label>
+          <textarea
+            type="textarea"
+            id='courseDescription'
+            name="courseDescription"
+            value={courseData.courseDescription}
+            onChange={handleInputChange}
+            placeholder="Enter description"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            required
+          />
         </div>
 
         <div className="mt-6">
@@ -246,7 +177,7 @@ export default function CreateCourse() {
             <div>
               <label htmlFor='watchTime' className="block text-sm font-medium text-gray-700 mb-1">
                 <Clock className="inline mr-1" size={16} />
-                Watch Time
+                Videos
               </label>
               <input
                 type="text"
@@ -254,7 +185,7 @@ export default function CreateCourse() {
                 name="Features.watchTime"
                 value={courseData.Features.watchTime}
                 onChange={handleInputChange}
-                placeholder="e.g. 305 min"
+                placeholder="e.g. 42"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 required
               />
@@ -295,8 +226,7 @@ export default function CreateCourse() {
             </div>
           </div>
         </div>
-
-        <div className="mt-6 grid grid-cols-1 gap-6">
+        {formType === 'Edit' && (
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-3">Course Thumbnail</h2>
             <ThumbnailUploader
@@ -308,31 +238,32 @@ export default function CreateCourse() {
               handleUploadThumbnail={handleUploadThumbnail}
             />
           </div>
+        )}
 
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">Intro Video</h2>
-            <VideoUploader
-              videoPreviewUrl={videoPreviewUrl}
-              videoFile={videoFile}
-              isLoading={isLoadingVideo}
-              videoInputRef={videoInputRef}
-              handleVideoChange={handleVideoChange}
-              handleUploadVideo={handleUploadVideo}
-            />
-          </div>
-        </div>
-
-        <div className="mt-8">
+        <div className="w-full mt-6">
           <button
             type="submit"
-            // disabled={isLoading}
-            className={`w-full py-3 px-4 rounded-md font-medium text-white ${isLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200`}
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200"
           >
-            {isLoading ? 'Creating Course...' : 'Create Course'}
+            {formType} Course
           </button>
         </div>
       </form>
     </div>
-  );
+  )
 }
+
+export default Form1;
+
+Form1.propTypes = {
+  formType: PropTypes.string.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  courseData: PropTypes.object.isRequired,
+  setCourseData: PropTypes.func.isRequired,
+  message: PropTypes.shape({
+    type: PropTypes.string,
+    text: PropTypes.string,
+  }).isRequired,
+  setMessage: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired
+};

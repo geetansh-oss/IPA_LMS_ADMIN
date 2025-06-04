@@ -9,7 +9,7 @@ export default function CourseModuleCreator() {
   const { Token } = useAuth();
 
   // Get course-related methods and data from the CourseContext
-  const { useChapters, addChapter, updateChapter, deleteChapter } = useCourse();
+  const { addChapter, updateChapter, deleteChapter } = useCourse();
   const { data: chapterData, isLoading, isError } = useChapters(courseId, Token);
   console.log(chapterData?.chapters);
   // Module state
