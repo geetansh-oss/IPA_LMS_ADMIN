@@ -85,7 +85,7 @@ const Form1 = ({ formType, handleSubmit, courseData, setCourseData, message, set
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">{formType} Course</h1>
         {formType === 'Edit' && (
-          <Link to={`/course/${courseId}/lecture`} className="text-sm text-blue-500 hover:underline mb-4">
+          <Link to={`/course/${courseId}/modules`} className="text-sm text-blue-500 hover:underline mb-4">
             <span className="font-semibold text-lg">Edit Lectures</span>
           </Link>
         )}

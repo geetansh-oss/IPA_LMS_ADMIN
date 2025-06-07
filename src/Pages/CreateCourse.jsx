@@ -2,8 +2,9 @@ import { useState } from 'react'
 import Form1 from '../Components/CourseForm/Form1'
 import { useAuth } from '../Context/AuthContext'
 import { apiService } from '../utils/apiHandler'
+import { toast } from 'react-toastify'
 
-const Form = () => {
+const CreateCourse = () => {
 
   const { Token } = useAuth();
 
@@ -37,9 +38,11 @@ const Form = () => {
     
     if(response.ok){
       setMessage({ text: response.message, type: 'success' });
+      toast.success(response.message);
     }
     setIsLoading(false);
     setCourseData({
+      status: "draft",
       courseName: "",
       heading: "",
       courseTopic: "",
@@ -67,4 +70,4 @@ const Form = () => {
   )
 }
 
-export default Form;
+export default CreateCourse;
