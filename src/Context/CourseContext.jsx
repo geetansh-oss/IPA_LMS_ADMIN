@@ -26,10 +26,10 @@ export const CourseProvider = ({ children }) => {
 
   // Update chapter
   const updateChapter = useMutation({
-    mutationFn: async ({ courseId, updatedChapter, token }) => {
+    mutationFn: async ({ chapterId, updatedChapter, token }) => {
       return await apiService({
         method: "PUT",
-        endpoint: `/updateChapter/${courseId}`,
+        endpoint: `/updateChapter/${chapterId}`,
         token: token,
         data: updatedChapter,
       });

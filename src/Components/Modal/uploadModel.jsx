@@ -4,7 +4,7 @@ const UploadModel = ({closeVideoModal}) => {
   return (
     <div className="fixed inset-0 bg-gray-900/90 backdrop-blur-sm z-40 flex items-center justify-center">
       <div className="bg-black text-white rounded-lg p-6 w-[90%] max-w-md shadow-lg z-50 relative">
-        <h2 className="text-xl font-semibold mb-4">Upload Videos</h2>
+        <h2 className="text-xl font-semibold mb-4">Add Videos</h2>
 
         {/* Your upload form or content here */}
         <input type="file" multiple className="mb-4" />
