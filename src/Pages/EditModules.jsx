@@ -57,32 +57,30 @@ export default function EditModules() {
   if (isLoading) return <div>Loading chapters...</div>;
 
   return (
-    <div>
-      <div>
-        <div>
-          <h1>Course Modules</h1>
-        </div>
-        <div>
+    <div className="p-6 mx-auto">
+      <div className="mb-6 shadow-md rounded-lg p-6 bg-white">
+        <h1 className="text-2xl font-bold mb-4">Course Modules</h1>
+        <div className="flex flex-wrap gap-2">
           {chapterData?.chapters?.length > 0 ? (
             chapterData.chapters.map((mod, index) => (
               <button
                 key={mod._id || index}
                 onClick={() => selectModule(index)}
-                className={`px-4 py-2 rounded-full ${isEditing && currentModuleIndex === index
+                className={`px-4 py-2 text-sm rounded-full transition-colors ${isEditing && currentModuleIndex === index
                     ? 'bg-blue-500 text-white'
-                    : 'bg-white border border-gray-300 hover:bg-gray-100'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
                   }`}
               >
                 {mod.ModuleName}
               </button>
             ))
           ) : (
-            <div>No modules available</div>
+            <div className="text-gray-500">No modules available</div>
           )}
 
           <button
             onClick={resetModule}
-            className="px-4 py-2 rounded-full bg-green-500 text-white hover:bg-green-600"
+            className="flex items-center gap-1 px-4 py-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
           >
             <Plus size={16} />
             Add Module

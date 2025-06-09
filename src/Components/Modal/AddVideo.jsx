@@ -13,6 +13,8 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
   const { courseId } = useParams();
   const { updateChapter } = useCourse();
 
+  console.log( "currentModule" , currentModule);
+
   const [videoTitle, setVideoTitle] = useState('');
   const [videoDuration, setVideoDuration] = useState('');
   const [videoDescription, setVideoDescription] = useState('');
@@ -20,7 +22,6 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState('');
 
-  // Prefill if editing
   useEffect(() => {
     if (editIndex !== null && currentModule.Videos?.[editIndex]) {
       const video = currentModule.Videos[editIndex];
@@ -90,7 +91,7 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
       console.log('Updating chapter with:', cleanedChapter);
       // Update in database
       await updateChapter.mutateAsync({
-        courseId: courseId,
+        chapterId: currentModule._id,
         updatedChapter: cleanedChapter,
         token: Token,
       });

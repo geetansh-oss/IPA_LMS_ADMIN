@@ -26,6 +26,8 @@ const VideoForm = ({ currentModule, setCurrentModule, currentModuleIndex, chapte
     }
   };
 
+  console.log("currentModule videoForm", currentModule);
+
   return (
     <div className="border border-gray-200 rounded-lg p-4 mb-6">
       <h3 className="text-lg font-medium mb-4">Videos</h3>
@@ -39,10 +41,6 @@ const VideoForm = ({ currentModule, setCurrentModule, currentModuleIndex, chapte
             >
               <div className="flex-1">
                 <p className="font-medium text-gray-800">{video.videoName}</p>
-                <p className="text-sm text-gray-600">{video.videoDuration || 'No duration'}</p>
-                {video.videoDescription && (
-                  <p className="text-sm text-gray-500 mt-1">{video.videoDescription}</p>
-                )}
               </div>
               <div className="flex gap-2">
                 <button

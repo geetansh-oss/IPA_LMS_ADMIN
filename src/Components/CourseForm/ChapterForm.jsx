@@ -142,7 +142,7 @@ const ChapterForm = ({
             id="moduleDescription"
             value={currentModule?.ModuleDescription || ''}
             onChange={(e) => updateModuleField('ModuleDescription', e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded h-[20vh]"
           />
         </div>
       </div>
@@ -152,6 +152,7 @@ const ChapterForm = ({
           <VideoForm
             chapterData={chapterData}
             currentModuleIndex={currentModuleIndex}
+            currentModule={currentModule}
             setCurrentModule={setCurrentModule}
           />
 
