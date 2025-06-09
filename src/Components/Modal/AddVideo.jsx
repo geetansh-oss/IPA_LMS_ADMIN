@@ -126,8 +126,9 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
         </h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Video Title *</label>
+          <label htmlFor="video-title" className="block text-sm font-medium mb-1">Video Title *</label>
           <input
+            id="video-title"
             type="text"
             value={videoTitle}
             onChange={(e) => setVideoTitle(e.target.value)}
@@ -137,8 +138,9 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Duration</label>
+          <label htmlFor="video-duration" className="block text-sm font-medium mb-1">Duration</label>
           <input
+            id="video-duration"
             type="text"
             value={videoDuration}
             onChange={(e) => setVideoDuration(e.target.value)}
@@ -148,8 +150,9 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Description</label>
+          <label htmlFor="video-description" className="block text-sm font-medium mb-1">Description</label>
           <textarea
+            id="video-description"
             value={videoDescription}
             onChange={(e) => setVideoDescription(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
