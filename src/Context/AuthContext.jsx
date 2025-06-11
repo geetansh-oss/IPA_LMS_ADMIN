@@ -1,31 +1,25 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem('token')
-  );
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const isAuthenticated = !!token;
 
-  const [Token, setToken] = useState(
-    localStorage.getItem('token')
-  );
-
-  const login = (token) => {
-    localStorage.setItem('token', token);
-    setToken(token);
-    setIsAuthenticated(true);
+  const login = (newToken) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false);
+    setToken(null);
   };
 
-  const contextValue = React.useMemo(
-    () => ({ isAuthenticated, login, logout, Token}),
-    [isAuthenticated, login, logout, Token]
+  const contextValue = useMemo(
+    () => ({ token, isAuthenticated, login, logout}),
+    [token, isAuthenticated]
   );
 
   return (
@@ -38,4 +32,5 @@ export const AuthProvider = ({ children }) => {
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
 export const useAuth = () => useContext(AuthContext);
