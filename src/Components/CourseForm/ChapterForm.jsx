@@ -36,11 +36,6 @@ const ChapterForm = ({
       });
 
       if (isEditing) {
-        if (!currentModule?._id) {
-          console.error('Missing module ID while updating');
-          return;
-        }
-        console.log('Updating module with payload:', payload);
         await updateChapter.mutateAsync({
           chapterId: currentModule._id,
           updatedChapter: payload,
@@ -48,7 +43,6 @@ const ChapterForm = ({
         });
       }
       else {
-        // Make sure we don't include _id in new chapter creation
         const { _id, ...newChapterPayload } = payload;
         await addChapter.mutateAsync({
           newChapter: newChapterPayload,

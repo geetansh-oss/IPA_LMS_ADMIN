@@ -1,25 +1,43 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
+const isExpired = (Token) => {
+  try {
+    const { exp } = jwtDecode(Token);
+    return Date.now() >= exp * 1000;
+  } catch {
+    return false;
+  }
+}
+
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const isAuthenticated = !!token;
+  const [Token, setToken] = useState(() => localStorage.getItem('Token'));
+  const isAuthenticated = !!Token;
+
+  useEffect(() => {
+    const token = localStorage.getItem('Token');
+    if (!token && isExpired(token)) {
+      logout();
+    }
+  }, []);
+
 
   const login = (newToken) => {
-    localStorage.setItem('token', newToken);
+    localStorage.setItem('Token', newToken);
     setToken(newToken);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('Token');
     setToken(null);
   };
 
   const contextValue = useMemo(
-    () => ({ token, isAuthenticated, login, logout}),
-    [token, isAuthenticated]
+    () => ({ Token, isAuthenticated, login, logout }),
+    [Token, isAuthenticated]
   );
 
   return (
