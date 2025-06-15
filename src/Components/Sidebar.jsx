@@ -17,6 +17,10 @@ const Sidebar = () => {
           <SquareLibrary size={20} />
           Courses
         </Link>
+        <Link to="/manageContent" className="flex items-center gap-2 text-lg font-medium">
+          <Share size={20} />
+          Manage Content
+        </Link>
         <Link to="/giveAccess" className="flex items-center gap-2 text-lg font-medium">
           <Share size={20} />
           Give Access
