@@ -17,4 +17,4 @@ const QuizForm = () => {
   )
 }
 
-export default QuizForm
+export default QuizForm;

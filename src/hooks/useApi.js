@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const useApi = () => {
-  const { logout, token } = useAuth();
+  const { logout, Token } = useAuth();
   const toastShownRef = useRef(false);
 
   const callApi = async ({ method = 'GET', endpoint, data = null }) => {
@@ -13,8 +13,8 @@ export const useApi = () => {
         'Content-Type': 'application/json',
       };
 
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (Token) {
+        headers['Authorization'] = `Bearer ${Token}`;
       }
 
       const options = {

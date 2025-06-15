@@ -1,11 +1,15 @@
 import React from 'react';
+import Users from '../Components/dashBoard/Users';
 
 const DashBoard = () => {
+
   return (
-    <div className="text-blue-600 flex justify-center items-center mx-auto">
-      DashBoard
+    <div className="mx-auto">
+      <div className='mt-4  flex items-center justify-center'>
+        <Users />
+      </div>
     </div>
   )
 }
 
-export default DashBoard
+export default DashBoard;
