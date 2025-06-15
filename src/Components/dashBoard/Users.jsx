@@ -4,7 +4,7 @@ import debounce from "lodash/debounce";
 import { useApi } from "../../hooks/useApi";
 import { useAuth } from "../../Context/AuthContext";
 
-const LIMIT = 10;
+const LIMIT = 8;
 
 const Users = () => {
   const apiService = useApi();
@@ -97,7 +97,7 @@ const Users = () => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md dark:shadow-gray-900/20">
+    <div className="w-full mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md dark:shadow-gray-900/20">
       <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Users Management</h1>
 
       <div className="mb-6">
@@ -105,7 +105,7 @@ const Users = () => {
           type="text"
           placeholder="Search users..."
           onChange={handleSearchChange}
-          className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg w-full max-w-md 
+          className="w-full max-w-md p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white
                    placeholder-gray-500 dark:placeholder-gray-400
                    focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
@@ -115,7 +115,7 @@ const Users = () => {
       {(() => {
         if (isLoading) {
           return (
-            <div className="flex justify-center items-center py-8">
+            <div className="w-full flex justify-center items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
             </div>
           );
@@ -123,7 +123,7 @@ const Users = () => {
 
         if (error) {
           return (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <div className="w-full bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <p className="text-red-600 dark:text-red-400">Error: {error.message}</p>
             </div>
           );
@@ -131,7 +131,7 @@ const Users = () => {
 
         if (users.length === 0) {
           return (
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
+            <div className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
               <p className="text-gray-600 dark:text-gray-400">No users found.</p>
             </div>
           );
@@ -139,9 +139,9 @@ const Users = () => {
 
         return (
           <>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-gray-900/20 overflow-hidden border dark:border-gray-700">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="w-full rounded-lg shadow-lg dark:shadow-gray-900/20 overflow-hidden border dark:border-gray-700">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900/50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -214,14 +214,14 @@ const Users = () => {
               </div>
 
               {isFetching && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800 px-6 py-2">
+                <div className="w-full bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800 px-6 py-2">
                   <p className="text-blue-600 dark:text-blue-400 text-sm">Updating...</p>
                 </div>
               )}
             </div>
 
             {/* Pagination Controls */}
-            <div className="mt-6 flex items-center justify-between">
+            <div className="w-full mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Showing {users.length} of {total} users
               </div>
