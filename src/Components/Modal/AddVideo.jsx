@@ -8,12 +8,10 @@ import { useParams } from 'react-router-dom';
 import { useCourse } from '../../Context/CourseContext';
 import { toast } from 'react-toastify';
 
-const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex, currentModuleIndex, chapterData }) => {
+const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex }) => {
   const { Token } = useAuth();
   const { courseId } = useParams();
   const { updateChapter } = useCourse();
-
-  console.log( "currentModule" , currentModule);
 
   const [videoTitle, setVideoTitle] = useState('');
   const [videoDuration, setVideoDuration] = useState('');
@@ -25,9 +23,9 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
   useEffect(() => {
     if (editIndex !== null && currentModule.Videos?.[editIndex]) {
       const video = currentModule.Videos[editIndex];
-      setVideoTitle(video.videoName || '');
-      setVideoDuration(video.videoDuration || '');
-      setVideoDescription(video.videoDescription || '');
+      setVideoTitle(video.videoName);
+      setVideoDuration(video.videoDuration);
+      setVideoDescription(video.videoDescription);
     }
   }, [editIndex, currentModule]);
 
@@ -49,123 +47,115 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
       alert('Please provide a video title.');
       return;
     }
-    // If adding new video, file is required
+
     if (editIndex === null && !videoFile) {
       alert('Please select a video file.');
       return;
     }
+
     setUploading(true);
     try {
       let videoId = null;
-      // Upload video if file is provided
       if (videoFile) {
         videoId = await uploadVideo(videoFile, CollectionId, Token);
-        if (!videoId) {
-          throw new Error('Video upload failed - no video ID returned');
-        }
+        if (!videoId) throw new Error('Video upload failed');
       }
-      // Create video data object
+
       const videoData = {
         videoId: videoId || (editIndex !== null ? currentModule.Videos[editIndex].videoId : null),
         videoName: videoTitle,
-        videoDescription: videoDescription,
-        videoDuration: videoDuration,
+        videoDescription,
+        videoDuration,
       };
-      // Update the Videos array
+
       const updatedVideos = [...(currentModule?.Videos || [])];
       if (editIndex !== null) {
-        // Update existing video
         updatedVideos[editIndex] = videoData;
       } else {
-        // Add new video
         updatedVideos.push(videoData);
       }
-      // Prepare the updated chapter data for database
+
       const updatedChapter = {
         ...currentModule,
         CourseId: courseId,
         Videos: updatedVideos.map(video => cleanObject(video)),
       };
-      // Clean the chapter object
-      const cleanedChapter = cleanObject(updatedChapter);
-      console.log('Updating chapter with:', cleanedChapter);
-      // Update in database
+
       await updateChapter.mutateAsync({
         chapterId: currentModule._id,
-        updatedChapter: cleanedChapter,
+        updatedChapter: cleanObject(updatedChapter),
         token: Token,
       });
-      // Update local state
+
       setCurrentModule(prev => ({
         ...prev,
         Videos: updatedVideos,
       }));
+
       toast.success(`Video ${editIndex !== null ? 'updated' : 'added'} successfully!`);
       closeVideoModal();
     } catch (error) {
-      console.error('Video operation failed:', error);
       toast.error(`Video operation failed: ${error.message || 'Unknown error'}`);
     } finally {
       setUploading(false);
     }
   };
 
-  // Button text logic
   let buttonText = 'Add Video';
-  if (uploading) {
-    buttonText = 'Uploading...';
-  } else if (editIndex !== null) {
-    buttonText = 'Update Video';
-  }
+  if (uploading) buttonText = 'Uploading...';
+  else if (editIndex !== null) buttonText = 'Update Video';
 
   return (
-    <div className="fixed inset-0 bg-gray-900/90 backdrop-blur-sm z-40 flex items-center justify-center">
-      <div className="bg-white text-black rounded-lg p-6 w-[90%] max-w-md shadow-lg z-50 relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+      <div className="bg-[#1f1f1f] text-white rounded-lg shadow-2xl p-6 w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">
           {editIndex !== null ? 'Edit Video' : 'Add Video'}
         </h2>
 
         <div className="mb-4">
-          <label htmlFor="video-title" className="block text-sm font-medium mb-1">Video Title *</label>
+          <label htmlFor="video-title" className="block text-sm font-medium mb-1 text-gray-300">Video Title *</label>
           <input
             id="video-title"
             type="text"
             value={videoTitle}
             onChange={(e) => setVideoTitle(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full border border-gray-600 bg-[#2b2b2b] text-white rounded px-3 py-2 placeholder-gray-400"
             placeholder="Enter video title"
+            required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="video-duration" className="block text-sm font-medium mb-1">Duration</label>
+          <label htmlFor="video-duration" className="block text-sm font-medium mb-1 text-gray-300">Duration</label>
           <input
             id="video-duration"
             type="text"
             value={videoDuration}
             onChange={(e) => setVideoDuration(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full border border-gray-600 bg-[#2b2b2b] text-white rounded px-3 py-2 placeholder-gray-400"
             placeholder="e.g., 5 min"
+            required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="video-description" className="block text-sm font-medium mb-1">Description</label>
+          <label htmlFor="video-description" className="block text-sm font-medium mb-1 text-gray-300">Description</label>
           <textarea
             id="video-description"
             value={videoDescription}
             onChange={(e) => setVideoDescription(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            placeholder="Enter video description"
+            className="w-full border border-gray-600 bg-[#2b2b2b] text-white rounded px-3 py-2 placeholder-gray-400"
             rows="3"
+            placeholder="Enter video description"
+            required
           />
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1 text-gray-300">
             Video File {editIndex === null && '*'}
           </label>
-          <label className="block w-full cursor-pointer bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-200 transition-all">
+          <label className="block w-full cursor-pointer bg-[#2b2b2b] border border-gray-600 rounded-lg px-4 py-2 hover:bg-[#383838] transition-all">
             <input
               type="file"
               accept=".mp4,.mkv"
@@ -178,7 +168,7 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
             />
             {fileName ? `📁 ${fileName}` : 'Click to select a video file'}
           </label>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             Supported formats: MP4, MKV. {editIndex !== null && 'Leave empty to keep existing video.'}
           </p>
         </div>
@@ -186,14 +176,14 @@ const AddVideo = ({ closeVideoModal, currentModule, setCurrentModule, editIndex,
         <div className="flex justify-end gap-2">
           <button
             onClick={closeVideoModal}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
             disabled={uploading}
           >
             Cancel
           </button>
           <button
             onClick={addOrUpdateVideo}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
             disabled={uploading}
           >
             {buttonText}
@@ -209,8 +199,6 @@ AddVideo.propTypes = {
   currentModule: PropTypes.object.isRequired,
   setCurrentModule: PropTypes.func.isRequired,
   editIndex: PropTypes.number,
-  currentModuleIndex: PropTypes.number,
-  chapterData: PropTypes.object,
 };
 
 export default AddVideo;

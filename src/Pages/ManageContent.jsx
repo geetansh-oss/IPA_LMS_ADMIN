@@ -1,10 +1,14 @@
-import React from 'react';
-
-
+import MainSLider from '../Components/manageContent/MainSlider';
+import FacultySlider from '../Components/manageContent/FacultySlider';
 
 const ManageContent = () => {
+
   return (
-    <div>ManageContent</div>
+    <div>
+      <h1>Manage Content </h1>
+      <MainSLider/>
+      <FacultySlider/>
+    </div>
   )
 }
 

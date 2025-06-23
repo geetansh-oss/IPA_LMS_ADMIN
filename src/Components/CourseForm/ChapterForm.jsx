@@ -150,7 +150,11 @@ const ChapterForm = ({
             setCurrentModule={setCurrentModule}
           />
 
-          <QuizForm />
+          <QuizForm
+          
+            currentModule={currentModule}
+            setCurrentModule={setCurrentModule}
+          />
         </>
       )}
 

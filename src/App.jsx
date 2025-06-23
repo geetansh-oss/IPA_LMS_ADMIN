@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './Components/auth/PrivateRoute';
 import Access from './Pages/Access';
+import ManageContent from './Pages/ManageContent';
 import CreateCourse from './Pages/CreateCourse';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path='/course/:courseId' element={<EditCourse />} />
             <Route path='/course/:courseId/modules' element={<EditModules />} />
             <Route path='/giveAccess' element={<Access />} />
+            <Route path='/manageContent' element={<ManageContent />} />
           </Route>
         </Route>
         <Route path='/login' element={<Login />} />

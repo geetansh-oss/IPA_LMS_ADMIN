@@ -48,15 +48,15 @@ const Access = () => {
 
   return (
     <div className="flex items-center justify-center h-full overflow-y-auto">
-      <div className="w-full flex flex-col gap-4 max-w-md bg-white shadow-lg rounded-2xl p-8 my-8">
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">Give Access</h1>
-        <p className="text-sm text-center text-gray-500 mb-6">
+      <div className="w-full flex flex-col gap-4 max-w-md bg-gray-800 shadow-lg rounded-2xl p-8 my-8">
+        <h1 className="text-3xl font-bold text-center mb-2">Give Access</h1>
+        <p className="text-sm text-center mb-6">
           Select a course and enter the email to give access.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor='user' className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor='user' className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               id='user'
@@ -69,11 +69,11 @@ const Access = () => {
           </div>
 
           <div>
-            <label htmlFor='course' className="block text-sm font-medium text-gray-700 mb-1">Select Course</label>
+            <label htmlFor='course' className="block text-sm font-medium mb-1">Select Course</label>
             <select
               required
               id='course'
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               value={data.courseId}
               onChange={(e) => setData((prev) => ({ ...prev, courseId: e.target.value }))}
               disabled={isLoading}
